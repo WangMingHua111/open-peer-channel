@@ -33,5 +33,13 @@
     "typescript": "^4.8.3"
   },
   "dependencies": {
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WangMingHua111/open-peer-channel.git"
+  },
+  "bugs": {
+    "url": "https://github.com/WangMingHua111/open-peer-channel/issues"
+  },
+  "homepage": "https://github.com/WangMingHua111/open-peer-channel#readme"
 }
