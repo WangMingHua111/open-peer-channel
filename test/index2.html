@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试2</title>
+  <script src="../dist/open-peer-channel.umd.js"></script>
+</head>
+
+<body>
+  <div>我是子级页面1</div>
+</body>
+
+<script>
+  const channel = opc.create({
+    id: 22,
+    parent: window.parent
+  })
+
+  channel.message((d) => {
+    console.log(document.body.innerText, d)
+  })
+
+  setTimeout(() => {
+    // 执行远程方法调用
+    channel.call(() => {
+      console.log('远程调用', akk())
+      const el = document.createElement('div')
+      el.innerText = new Date().toString()
+      document.body.appendChild(el)
+      return AAA()
+    }).then(result => {
+      console.log('调用结果：', result)
+      const el = document.createElement('div')
+      el.innerText = `调用结果：${result}`
+      document.body.appendChild(el)
+    }).catch(error => {
+      console.log('调用失败：', error)
+      const el = document.createElement('div')
+      el.innerText = `调用失败：${error}`
+      document.body.appendChild(el)
+    })
+  }, 3000)
+  // console.log(channel)
+</script>
+
+</html>

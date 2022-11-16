@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试</title>
+  <script src="../dist/open-peer-channel.umd.js"></script>
+</head>
+
+<body>
+  <div>我是父级页面</div>
+  <iframe id="fm" src="index2.html" frameborder="0" style="background-color: rgb(123, 130, 193);"></iframe>
+  <iframe id="fm2" src="index3.html" frameborder="0" style="background-color: rgb(123, 130, 193);"></iframe>
+</body>
+
+<script>
+
+
+  const channel = opc.create({
+    id: '22',
+  })
+  channel
+    .register({
+      aaa: 456
+    })
+    .register({
+      bbb: 123
+    })
+
+  const f = () => {
+    class abc {
+      constructor(){
+        this.c = 1
+      }
+    }
+    function akk () {
+      return '123'
+    }
+    channel.register(abc).register(akk)
+  }
+  f()
+  channel.flag = '我是父级页面'
+
+  function AAA() {
+    console.log('成功调用')
+    return '我是结果'
+  }
+  console.log(channel)
+  setTimeout(() => {
+    channel.push(`父级发送：${new Date()}`)
+
+  }, 5000)
+</script>
+
+</html>
