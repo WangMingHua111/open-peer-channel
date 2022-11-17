@@ -35,6 +35,9 @@ interface ChannelServerOptions {
     id?: string;
 }
 interface OpenPeerChannelOptions extends ChannelServerOptions {
+    /**
+     * 父级Window，通过传入该值，打通两个对象间的通讯
+     */
     parent?: Window;
 }
 /**
@@ -94,6 +97,10 @@ declare abstract class ChannelServer implements IServer {
      */
     protected replypacket(no: number, data: any, type?: string, internal?: boolean, error?: any): PacketData;
     /**
+    * 注册postMessage
+    */
+    protected selfRegister(parent: MessageEventSource): void;
+    /**
      * 生成指定位数的GUID，无【-】格式
      * @param [digit=8] 位数
      * @returns
@@ -119,10 +126,6 @@ export declare class OpenPeerChannel extends ChannelServer implements IClient {
     push(data: any, type?: string | undefined): void;
     call(fn: Function): Promise<any>;
     message(listener: (data: any) => void, type?: string): IClient;
-    /**
-     * 自注册
-     */
-    private selfRegister;
 }
 export declare function create(opts?: OpenPeerChannelOptions): OpenPeerChannel;
 export {};

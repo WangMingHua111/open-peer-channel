@@ -142,6 +142,7 @@ abstract class ChannelServer implements IServer {
    */
   protected listener(event: MessageEvent) {
     const t = event.data
+    // console.log('listener',t)
     if (typeof t === 'object' && PacketData.assignable(t)) {
       const { no, sessionId, type, data, internal, sender, error } = t as PacketData
       // 会话Id不匹配
@@ -149,8 +150,9 @@ abstract class ChannelServer implements IServer {
 
       if (internal) {
         // 自注册
-        if (type === SELFREGISTERKEY) {
+        if (type === SELFREGISTERKEY && !this.sources.has(sender)) {
           this.sources.set(sender, event.source as MessageEventSource)
+          this.selfRegister(event.source as MessageEventSource)
         }
         // 远程函数调用
         if (type === REMOTECALLKEY) {
@@ -195,6 +197,15 @@ abstract class ChannelServer implements IServer {
   protected replypacket(no: number, data: any, type: string = '*', internal: boolean = false, error?: any): PacketData {
     const { sessionId, id } = this
     return new PacketData(id, no, sessionId, type, data, internal, error)
+  }
+
+  /**
+  * 注册postMessage
+  */
+  protected selfRegister(parent: MessageEventSource) {
+    parent.postMessage(this.packet('', SELFREGISTERKEY, true), {
+      targetOrigin: '*'
+    })
   }
 
   /**
@@ -297,14 +308,6 @@ export class OpenPeerChannel extends ChannelServer implements IClient {
       this.listeners.set(type, [])
     this.listeners.get(type)?.push(listener)
     return this
-  }
-
-  /**
-   * 自注册
-   */
-  private selfRegister(parent: Window) {
-    parent?.postMessage(this.packet('', SELFREGISTERKEY, true), '*')
-    this.sources.set(this.id, parent)
   }
 }
 

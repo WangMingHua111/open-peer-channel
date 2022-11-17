@@ -72,6 +72,7 @@ class ChannelServer {
      */
     listener(event) {
         const t = event.data;
+        console.log('listener', t);
         if (typeof t === 'object' && PacketData.assignable(t)) {
             const { no, sessionId, type, data, internal, sender, error } = t;
             // 会话Id不匹配
@@ -79,8 +80,9 @@ class ChannelServer {
                 return;
             if (internal) {
                 // 自注册
-                if (type === SELFREGISTERKEY) {
+                if (type === SELFREGISTERKEY && !this.sources.has(sender)) {
                     this.sources.set(sender, event.source);
+                    this.selfRegister(event.source);
                 }
                 // 远程函数调用
                 if (type === REMOTECALLKEY) {
@@ -121,6 +123,14 @@ class ChannelServer {
     replypacket(no, data, type = '*', internal = false, error) {
         const { sessionId, id } = this;
         return new PacketData(id, no, sessionId, type, data, internal, error);
+    }
+    /**
+    * 注册postMessage
+    */
+    selfRegister(parent) {
+        parent.postMessage(this.packet('', SELFREGISTERKEY, true), {
+            targetOrigin: '*'
+        });
     }
     /**
      * 生成指定位数的GUID，无【-】格式
@@ -215,13 +225,6 @@ class OpenPeerChannel extends ChannelServer {
             this.listeners.set(type, []);
         (_a = this.listeners.get(type)) === null || _a === void 0 ? void 0 : _a.push(listener);
         return this;
-    }
-    /**
-     * 自注册
-     */
-    selfRegister(parent) {
-        parent === null || parent === void 0 ? void 0 : parent.postMessage(this.packet('', SELFREGISTERKEY, true), '*');
-        this.sources.set(this.id, parent);
     }
 }
 function create(opts) {
