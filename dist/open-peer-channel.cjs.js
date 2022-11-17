@@ -72,7 +72,7 @@ class ChannelServer {
      */
     listener(event) {
         const t = event.data;
-        console.log('listener', t);
+        // console.log('listener',t)
         if (typeof t === 'object' && PacketData.assignable(t)) {
             const { no, sessionId, type, data, internal, sender, error } = t;
             // 会话Id不匹配
