@@ -86,7 +86,7 @@ class ChannelServer {
                 }
                 // 远程函数调用
                 if (type === REMOTECALLKEY) {
-                    this.wrappingFunctions(no, sender, data);
+                    this.wrappingFunctions(no, sender, typeof data === 'string' ? { fnStr: data } : data);
                 }
                 // 远程函数调用结果
                 if (type === REMOTECALLRESULTKEY) {
@@ -151,7 +151,7 @@ class ChannelServer {
      * @param no 数据包编号
      * @returns
      */
-    wrappingFunctions(no, sender, fnStr) {
+    wrappingFunctions(no, sender, { fnStr, args = [] }) {
         // 变量提升
         const hoisting = this.hoisting.size > 0 ? `const {${[...this.hoisting].join(',')}} = this;\n` : '';
         const fn = new Function(`${hoisting} return ${fnStr}`).bind(Object.assign({}, this.context))();
@@ -161,7 +161,7 @@ class ChannelServer {
             return;
         try {
             // 执行函数调用
-            const result = fn();
+            const result = fn(...args);
             const packet = this.replypacket(no, result, REMOTECALLRESULTKEY, true);
             proxy.postMessage(packet, { targetOrigin: '*' });
         }
@@ -172,6 +172,8 @@ class ChannelServer {
     }
     codingOfResult(no, result, error) {
         const { resolve, reject } = this.calls.get(no) || {};
+        // 移除回调
+        this.calls.delete(no);
         if (error) {
             // 远程调用抛异常
             reject && reject(error);
@@ -205,9 +207,9 @@ class OpenPeerChannel extends ChannelServer {
             proxy.postMessage(packet, { targetOrigin: '*' });
         }
     }
-    call(fn) {
+    call(fn, ...args) {
         return new Promise((resolve, reject) => {
-            const packet = this.packet(fn.toString(), REMOTECALLKEY, true);
+            const packet = this.packet({ args, fnStr: fn.toString() }, REMOTECALLKEY, true);
             for (const proxy of this.sources.values()) {
                 proxy.postMessage(packet, {
                     targetOrigin: '*'

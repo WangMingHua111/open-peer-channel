@@ -124,7 +124,7 @@ export declare class OpenPeerChannel extends ChannelServer implements IClient {
     constructor(options?: OpenPeerChannelOptions);
     destroy(): void;
     push(data: any, type?: string | undefined): void;
-    call(fn: Function): Promise<any>;
+    call(fn: Function, ...args: any[]): Promise<any>;
     message(listener: (data: any) => void, type?: string): IClient;
 }
 export declare function create(opts?: OpenPeerChannelOptions): OpenPeerChannel;

@@ -43,6 +43,20 @@
       document.body.appendChild(el)
     })
   }, 3000)
+
+  // 带参数回调
+  setTimeout(() => {
+    // 执行远程方法调用
+    channel.call((a1, a2, a3) => {
+      console.log('远程调用参数', a1, a2, a3)
+      const el = document.createElement('div')
+      el.innerText = '远程调用参数：' + [a1, a2, a3].join(',')
+      document.body.appendChild(el)
+      return AAA()
+    }, 123, {
+      abc: 1
+    }, 'sa12da1')
+  }, 5000)
   // console.log(channel)
 </script>
 
