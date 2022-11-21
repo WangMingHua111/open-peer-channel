@@ -1,6 +1,6 @@
 {
   "name": "open-peer-channel",
-  "version": "0.0.2-beta.2",
+  "version": "0.0.2-beta.3",
   "description": "基于PostMessage的对象和方法的双向通讯库",
   "main": "./dist/open-peer-channel.umd.js",
   "module": "./dist/open-peer-channel.es.js",

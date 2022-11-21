@@ -10,7 +10,7 @@ import pkg from './package.json';
 // 拿到package.json的name属性来动态设置打包名称
 const libName = pkg.name;
 export default defineConfig({
-  input: 'src/OpenPeerChannel.ts',
+  input: 'src/open-peer-channel.ts',
   output: [
     {
       file: `dist/${libName}.cjs.js`,
@@ -39,8 +39,7 @@ export default defineConfig({
       module: 'ES2015',
       sourceMap: false,
       compilerOptions: {
-        declaration: false
-        // declarationDir: "./dist/types"
+        declaration: false,
       }
     }),
     resolve(),
