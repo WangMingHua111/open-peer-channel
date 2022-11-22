@@ -1,3 +1,5 @@
+// import remove from 'lodash-es/remove'
+// import clone from 'lodash-es/clone'
 interface IServer {
   /**
    * 销毁对象
@@ -23,11 +25,18 @@ interface IClient {
    */
   call(fn: Function): Promise<any>
   /**
-   * 
+   * 绑定消息侦听器
    * @param listener 侦听器
    * @param [type="*"]  事件类型 
    */
   message(listener: (data: any) => void, type?: string): IClient
+
+  /**
+   * 取消消息侦听器
+   * @param [type]  事件类型，不传值时移除所有侦听器
+   * @param listener 侦听器
+   */
+  off(type?: string, listener?: (data: any) => void): IClient
 }
 
 interface ChannelServerOptions {
@@ -40,8 +49,9 @@ interface ChannelServerOptions {
 interface OpenPeerChannelOptions extends ChannelServerOptions {
   /**
    * 父级Window，通过传入该值，打通两个对象间的通讯
+   * 可以通过 SimpleMessageEventSource 函数快速获取parent链
    */
-  parent?: Window
+  parent?: MessageEventSource | Array<MessageEventSource>
 }
 
 /**
@@ -149,8 +159,11 @@ abstract class ChannelServer implements IServer {
       if (this.sessionId !== sessionId) return
 
       if (internal) {
+        if (type === SELFREGISTERKEY)
+          console.log(SELFREGISTERKEY, sender, sessionId, data)
         // 自注册
         if (type === SELFREGISTERKEY && !this.sources.has(sender)) {
+
           this.sources.set(sender, event.source as MessageEventSource)
           this.selfRegister(event.source as MessageEventSource)
         }
@@ -202,10 +215,15 @@ abstract class ChannelServer implements IServer {
   /**
   * 注册postMessage
   */
-  protected selfRegister(parent: MessageEventSource) {
-    parent.postMessage(this.packet('', SELFREGISTERKEY, true), {
-      targetOrigin: '*'
-    })
+  protected selfRegister(parent: MessageEventSource | Array<MessageEventSource>) {
+    // 对象去重
+    const temp = new Set(Array.isArray(parent) ? parent : [parent])
+    const windows = [...temp]
+    for (const w of windows) {
+      w.postMessage(this.packet('', SELFREGISTERKEY, true), {
+        targetOrigin: '*'
+      })
+    }
   }
 
   /**
@@ -312,9 +330,41 @@ export class OpenPeerChannel extends ChannelServer implements IClient {
     this.listeners.get(type)?.push(listener)
     return this
   }
+  off(type?: string, listener?: ((data: any) => void) | undefined) {
+    if (!type) {
+      // 移除所有侦听器
+      this.listeners.clear()
+    } else if (listener) {
+      // 移除指定侦听器
+      if (this.listeners.has(type)) {
+        const listeners: any = this.listeners.get(type)
+        const index = listeners.indexOf(listener)
+        index > -1 && (listeners.splice(index, 1))
+      }
+    } else {
+      this.listeners.set(type, [])
+    }
+    return this
+  }
 }
 
 export function create(opts?: OpenPeerChannelOptions) {
   return new OpenPeerChannel(opts)
+}
+
+/**
+ * 获取当前MessageEventSource和父级MessageEventSource链对象
+ * @returns 
+ */
+export function SimpleMessageEventSource(): Array<MessageEventSource> {
+  const cache = new Set<Window>()
+  const recursive = (w: Window) => {
+    if (w && !cache.has(w)) {
+      cache.add(w)
+      recursive(w.parent)
+    }
+  }
+  recursive(window)
+  return [...cache]
 }
 

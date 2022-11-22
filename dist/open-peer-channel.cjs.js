@@ -79,6 +79,8 @@ class ChannelServer {
             if (this.sessionId !== sessionId)
                 return;
             if (internal) {
+                if (type === SELFREGISTERKEY)
+                    console.log(SELFREGISTERKEY, sender, sessionId, data);
                 // 自注册
                 if (type === SELFREGISTERKEY && !this.sources.has(sender)) {
                     this.sources.set(sender, event.source);
@@ -128,9 +130,14 @@ class ChannelServer {
     * 注册postMessage
     */
     selfRegister(parent) {
-        parent.postMessage(this.packet('', SELFREGISTERKEY, true), {
-            targetOrigin: '*'
-        });
+        // 对象去重
+        const temp = new Set(Array.isArray(parent) ? parent : [parent]);
+        const windows = [...temp];
+        for (const w of windows) {
+            w.postMessage(this.packet('', SELFREGISTERKEY, true), {
+                targetOrigin: '*'
+            });
+        }
     }
     /**
      * 生成指定位数的GUID，无【-】格式
@@ -228,10 +235,44 @@ class OpenPeerChannel extends ChannelServer {
         (_a = this.listeners.get(type)) === null || _a === void 0 ? void 0 : _a.push(listener);
         return this;
     }
+    off(type, listener) {
+        if (!type) {
+            // 移除所有侦听器
+            this.listeners.clear();
+        }
+        else if (listener) {
+            // 移除指定侦听器
+            if (this.listeners.has(type)) {
+                const listeners = this.listeners.get(type);
+                const index = listeners.indexOf(listener);
+                index > -1 && (listeners.splice(index, 1));
+            }
+        }
+        else {
+            this.listeners.set(type, []);
+        }
+        return this;
+    }
 }
 function create(opts) {
     return new OpenPeerChannel(opts);
 }
+/**
+ * 获取当前MessageEventSource和父级MessageEventSource链对象
+ * @returns
+ */
+function SimpleMessageEventSource() {
+    const cache = new Set();
+    const recursive = (w) => {
+        if (w && !cache.has(w)) {
+            cache.add(w);
+            recursive(w.parent);
+        }
+    };
+    recursive(window);
+    return [...cache];
+}
 
 exports.OpenPeerChannel = OpenPeerChannel;
+exports.SimpleMessageEventSource = SimpleMessageEventSource;
 exports.create = create;

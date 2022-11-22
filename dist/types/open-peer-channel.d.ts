@@ -22,11 +22,17 @@ interface IClient {
      */
     call(fn: Function): Promise<any>;
     /**
-     *
+     * 绑定消息侦听器
      * @param listener 侦听器
      * @param [type="*"]  事件类型
      */
     message(listener: (data: any) => void, type?: string): IClient;
+    /**
+     * 取消消息侦听器
+     * @param [type]  事件类型，不传值时移除所有侦听器
+     * @param listener 侦听器
+     */
+    off(type?: string, listener?: (data: any) => void): IClient;
 }
 interface ChannelServerOptions {
     /**
@@ -37,8 +43,9 @@ interface ChannelServerOptions {
 interface OpenPeerChannelOptions extends ChannelServerOptions {
     /**
      * 父级Window，通过传入该值，打通两个对象间的通讯
+     * 可以通过 SimpleMessageEventSource 函数快速获取parent链
      */
-    parent?: Window;
+    parent?: MessageEventSource | Array<MessageEventSource>;
 }
 /**
  * 封包数据
@@ -99,7 +106,7 @@ declare abstract class ChannelServer implements IServer {
     /**
     * 注册postMessage
     */
-    protected selfRegister(parent: MessageEventSource): void;
+    protected selfRegister(parent: MessageEventSource | Array<MessageEventSource>): void;
     /**
      * 生成指定位数的GUID，无【-】格式
      * @param [digit=8] 位数
@@ -126,6 +133,12 @@ export declare class OpenPeerChannel extends ChannelServer implements IClient {
     push(data: any, type?: string | undefined): void;
     call(fn: Function, ...args: any[]): Promise<any>;
     message(listener: (data: any) => void, type?: string): IClient;
+    off(type?: string, listener?: ((data: any) => void) | undefined): this;
 }
 export declare function create(opts?: OpenPeerChannelOptions): OpenPeerChannel;
+/**
+ * 获取当前MessageEventSource和父级MessageEventSource链对象
+ * @returns
+ */
+export declare function SimpleMessageEventSource(): Array<MessageEventSource>;
 export {};
