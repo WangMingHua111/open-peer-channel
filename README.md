@@ -1,7 +1,7 @@
 # open-peer-channel
 基于PostMessage的对象和方法的双向通讯库，支持基本的Message通讯，和另一个页面的远程方法调用。
 
-  `npm install open-peer-channel`
+  `npm install @wangminghua/open-peer-channel`
   
 **CDN版本**
   

@@ -4,11 +4,11 @@ import typescript from '@rollup/plugin-typescript';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 
-import pkg from './package.json';
+// import pkg from './package.json';
 // import { camelCase } from 'lodash'
 
 // 拿到package.json的name属性来动态设置打包名称
-const libName = pkg.name;
+const libName = 'open-peer-channel';
 export default defineConfig({
   input: 'src/open-peer-channel.ts',
   output: [

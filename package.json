@@ -1,5 +1,5 @@
 {
-  "name": "open-peer-channel",
+  "name": "@wangminghua/open-peer-channel",
   "version": "0.0.3",
   "description": "基于PostMessage的对象和方法的双向通讯库",
   "main": "./dist/open-peer-channel.umd.js",
@@ -32,8 +32,6 @@
     "tslib": "^2.4.0",
     "typescript": "^4.8.3"
   },
-  "dependencies": {
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/WangMingHua111/open-peer-channel.git"
@@ -41,5 +39,8 @@
   "bugs": {
     "url": "https://github.com/WangMingHua111/open-peer-channel/issues"
   },
-  "homepage": "https://github.com/WangMingHua111/open-peer-channel#readme"
+  "homepage": "https://github.com/WangMingHua111/open-peer-channel#readme",
+  "directories": {
+    "test": "test"
+  }
 }
