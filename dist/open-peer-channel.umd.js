@@ -24,7 +24,7 @@
     /**
      * 自注册
      */
-    const SELFREGISTERKEY = "SelfRegister";
+    const SELFREGISTERKEY = 'SelfRegister';
     /**
      * 远程函数调用
      */
@@ -82,12 +82,12 @@
                     return;
                 if (internal) {
                     if (type === SELFREGISTERKEY)
-                        console.log(SELFREGISTERKEY, sender, sessionId, data);
-                    // 自注册
-                    if (type === SELFREGISTERKEY && !this.sources.has(sender)) {
-                        this.sources.set(sender, event.source);
-                        this.selfRegister(event.source);
-                    }
+                        if (type === SELFREGISTERKEY && !this.sources.has(sender)) {
+                            // console.log(SELFREGISTERKEY, sender, sessionId, data)
+                            // 自注册
+                            this.sources.set(sender, event.source);
+                            this.selfRegister(event.source);
+                        }
                     // 远程函数调用
                     if (type === REMOTECALLKEY) {
                         this.wrappingFunctions(no, sender, typeof data === 'string' ? { fnStr: data } : data);
@@ -129,15 +129,15 @@
             return new PacketData(id, no, sessionId, type, data, internal, error);
         }
         /**
-        * 注册postMessage
-        */
+         * 注册postMessage
+         */
         selfRegister(parent) {
             // 对象去重
             const temp = new Set(Array.isArray(parent) ? parent : [parent]);
             const windows = [...temp];
             for (const w of windows) {
                 w.postMessage(this.packet('', SELFREGISTERKEY, true), {
-                    targetOrigin: '*'
+                    targetOrigin: '*',
                 });
             }
         }
@@ -160,7 +160,7 @@
          * @param no 数据包编号
          * @returns
          */
-        wrappingFunctions(no, sender, { fnStr, args = [] }) {
+        async wrappingFunctions(no, sender, { fnStr, args = [] }) {
             // 变量提升
             const hoisting = this.hoisting.size > 0 ? `const {${[...this.hoisting].join(',')}} = this;\n` : '';
             const fn = new Function(`${hoisting} return ${fnStr}`).bind(Object.assign({}, this.context))();
@@ -169,8 +169,15 @@
             if (!proxy)
                 return;
             try {
+                let result;
                 // 执行函数调用
-                const result = fn(...args);
+                let fnResult = fn(...args);
+                if (fnResult instanceof Promise) {
+                    result = await fnResult;
+                }
+                else {
+                    result = fnResult;
+                }
                 const packet = this.replypacket(no, result, REMOTECALLRESULTKEY, true);
                 proxy.postMessage(packet, { targetOrigin: '*' });
             }
@@ -221,12 +228,12 @@
                 const packet = this.packet({ args, fnStr: fn.toString() }, REMOTECALLKEY, true);
                 for (const proxy of this.sources.values()) {
                     proxy.postMessage(packet, {
-                        targetOrigin: '*'
+                        targetOrigin: '*',
                     });
                 }
                 this.calls.set(packet.no, {
                     resolve,
-                    reject
+                    reject,
                 });
             });
         }
@@ -247,7 +254,7 @@
                 if (this.listeners.has(type)) {
                     const listeners = this.listeners.get(type);
                     const index = listeners.indexOf(listener);
-                    index > -1 && (listeners.splice(index, 1));
+                    index > -1 && listeners.splice(index, 1);
                 }
             }
             else {

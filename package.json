@@ -1,46 +1,46 @@
 {
-  "name": "@wangminghua/open-peer-channel",
-  "version": "0.0.3",
-  "description": "基于PostMessage的对象和方法的双向通讯库",
-  "main": "./dist/open-peer-channel.umd.js",
-  "module": "./dist/open-peer-channel.es.js",
-  "types": "./dist/types/open-peer-channel.d.ts",
-  "scripts": {
-    "build": "rimraf -rf ./dist && rollup --config && tsc",
-    "serve": "http-server ./"
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
-  "keywords": [
-    "postMessage",
-    "iframe",
-    "channel"
-  ],
-  "author": "wangminghua",
-  "license": "Apache-2.0",
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^22.0.2",
-    "@rollup/plugin-node-resolve": "^14.1.0",
-    "@rollup/plugin-typescript": "^8.5.0",
-    "http-server": "^14.1.1",
-    "lodash": "^4.17.21",
-    "rimraf": "^3.0.2",
-    "rollup": "^2.79.1",
-    "rollup-plugin-babel": "^4.4.0",
-    "tslib": "^2.4.0",
-    "typescript": "^4.8.3"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/WangMingHua111/open-peer-channel.git"
-  },
-  "bugs": {
-    "url": "https://github.com/WangMingHua111/open-peer-channel/issues"
-  },
-  "homepage": "https://github.com/WangMingHua111/open-peer-channel#readme",
-  "directories": {
-    "test": "test"
-  }
+    "name": "@wangminghua/open-peer-channel",
+    "version": "0.0.4",
+    "description": "基于PostMessage的对象和方法的双向通讯库",
+    "main": "./dist/open-peer-channel.umd.js",
+    "module": "./dist/open-peer-channel.es.js",
+    "types": "./dist/types/open-peer-channel.d.ts",
+    "scripts": {
+        "build": "rimraf -rf ./dist && rollup --config && tsc",
+        "serve": "http-server ./"
+    },
+    "files": [
+        "dist",
+        "src"
+    ],
+    "keywords": [
+        "postMessage",
+        "iframe",
+        "channel"
+    ],
+    "author": "wangminghua",
+    "license": "Apache-2.0",
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^22.0.2",
+        "@rollup/plugin-node-resolve": "^14.1.0",
+        "@rollup/plugin-typescript": "^8.5.0",
+        "http-server": "^14.1.1",
+        "lodash": "^4.17.21",
+        "rimraf": "^3.0.2",
+        "rollup": "^2.79.1",
+        "rollup-plugin-babel": "^4.4.0",
+        "tslib": "^2.4.0",
+        "typescript": "^4.8.3"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/WangMingHua111/open-peer-channel.git"
+    },
+    "bugs": {
+        "url": "https://github.com/WangMingHua111/open-peer-channel/issues"
+    },
+    "homepage": "https://github.com/WangMingHua111/open-peer-channel#readme",
+    "directories": {
+        "test": "test"
+    }
 }

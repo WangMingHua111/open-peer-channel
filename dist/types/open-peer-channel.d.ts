@@ -75,7 +75,7 @@ declare abstract class ChannelServer implements IServer {
     protected readonly context: Record<string, symbol>;
     protected readonly hoisting: Set<string>;
     protected readonly sources: Map<string, MessageEventSource>;
-    protected readonly abstract listeners: Map<string, Array<(data: any) => void>>;
+    protected abstract readonly listeners: Map<string, Array<(data: any) => void>>;
     protected readonly calls: Map<number, {
         resolve: (value: any) => void;
         reject: (reason?: any) => void;
@@ -104,8 +104,8 @@ declare abstract class ChannelServer implements IServer {
      */
     protected replypacket(no: number, data: any, type?: string, internal?: boolean, error?: any): PacketData;
     /**
-    * 注册postMessage
-    */
+     * 注册postMessage
+     */
     protected selfRegister(parent: MessageEventSource | Array<MessageEventSource>): void;
     /**
      * 生成指定位数的GUID，无【-】格式
