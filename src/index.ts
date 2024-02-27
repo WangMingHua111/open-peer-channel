@@ -282,7 +282,7 @@ class OpenPeerChannel implements IChannel {
     protocol.source = source
 
     this.ready = new Promise(async (resolve, reject) => {
-      const interval = 1000
+      const interval = 100
       const step = (30 * 1000) / interval
       for (let i = 0; i < step; i++) {
         try {

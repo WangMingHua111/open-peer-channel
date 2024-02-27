@@ -44,5 +44,9 @@
   "homepage": "https://github.com/WangMingHua111/open-peer-channel#readme",
   "directories": {
     "test": "test"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
