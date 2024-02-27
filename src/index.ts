@@ -271,7 +271,7 @@ class OpenPeerChannel implements IChannel {
   private readonly context: Record<string, symbol> = {}
   private readonly log: boolean
 
-  constructor(opts: { log?: boolean }) {
+  constructor(opts?: { log?: boolean }) {
     const { log = false } = opts || {}
     this.log = log
     this.protocol = new ChannelProtocol()
