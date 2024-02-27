@@ -3,10 +3,17 @@
  */
 export type CancelFn = () => void
 
+interface IDestroy {
+  /**
+   * 销毁资源
+   */
+  destroy(): void
+}
+
 /**
  * 消息通道（对等通道）
  */
-interface IChannel {
+interface IChannel extends IDestroy {
   /**
    * 连接 MessageEventSource
    */
@@ -44,12 +51,6 @@ interface IChannel {
   off(type?: string, listener?: (data: any) => void): IChannel
 }
 
-interface IDestroy {
-  /**
-   * 销毁资源
-   */
-  destroy(): void
-}
 enum PacketDataTypeEnum {
   /**
    * 公共数据包
@@ -276,6 +277,9 @@ class OpenPeerChannel implements IChannel {
     this.log = log
     this.protocol = new ChannelProtocol()
     this.protocol.onmessage = this._onmessage.bind(this)
+  }
+  destroy(): void {
+    this.protocol.destroy()
   }
   async connect(source: MessageEventSource): Promise<boolean> {
     const protocol = this.protocol
