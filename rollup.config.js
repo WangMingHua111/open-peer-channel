@@ -1,16 +1,16 @@
-import { defineConfig } from 'rollup';
-import babel from 'rollup-plugin-babel';
-import typescript from '@rollup/plugin-typescript';
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
+import commonjs from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve'
+import typescript from '@rollup/plugin-typescript'
+import { defineConfig } from 'rollup'
+import babel from 'rollup-plugin-babel'
 
 // import pkg from './package.json';
 // import { camelCase } from 'lodash'
 
 // 拿到package.json的name属性来动态设置打包名称
-const libName = 'open-peer-channel';
+const libName = 'index'
 export default defineConfig({
-  input: 'src/open-peer-channel.ts',
+  input: 'src/index.ts',
   output: [
     {
       file: `dist/${libName}.cjs.js`,
@@ -39,9 +39,9 @@ export default defineConfig({
       module: 'ES2015',
       sourceMap: false,
       compilerOptions: {
-        declaration: false,
-      }
+        declaration: true,
+      },
     }),
     resolve(),
   ],
-});
+})
