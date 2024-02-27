@@ -1,10 +1,10 @@
 {
   "name": "@wangminghua/open-peer-channel",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "基于PostMessage的对象和方法的双向通讯库",
   "main": "./dist/index.umd.js",
   "module": "./dist/index.es.js",
-  "types": "./dist/types/open-peer-channel.d.ts",
+  "types": "./dist/types/index.d.ts",
   "scripts": {
     "build": "rimraf -rf ./dist && rollup --config",
     "serve": "http-server ./"
