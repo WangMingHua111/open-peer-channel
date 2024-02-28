@@ -17,7 +17,7 @@
       const channel = new opc.OpenPeerChannel()
       channel.message((data) => {
         console.log('我是子级页面1', data)
-      })
+      }, 'ss')
 
       // setTimeout(() => {
       //   console.log('子页面 setTimeout')

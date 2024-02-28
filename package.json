@@ -1,6 +1,6 @@
 {
   "name": "@wangminghua/open-peer-channel",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "基于PostMessage的对象和方法的双向通讯库",
   "main": "./dist/index.umd.js",
   "module": "./dist/index.es.js",

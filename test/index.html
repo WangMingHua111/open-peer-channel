@@ -27,13 +27,12 @@
     console.log('channel', channel)
     async function onload2() {
       console.log('connect start', document.querySelector('#fm'))
-      try {
-        channel.connect(document.querySelector('#fm').contentWindow)
-        await channel.push('ni好啊')
-        console.log('发送结束')
-      } catch (e) {
-        console.log('connect error', e)
-      }
+      channel.connect(document.querySelector('#fm').contentWindow)
+      await channel.push('ni好啊', 'ss')
+      const result = await channel.call(() => {
+        return 1 + 2 + 'abc'
+      })
+      console.log('发送结束', result)
     }
   </script>
 </html>

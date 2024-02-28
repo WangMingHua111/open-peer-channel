@@ -125,18 +125,6 @@ type PacketData = {
   readonly error?: any
 }
 
-namespace utils {
-  export function guid(digit = 8): string {
-    return 'x'.repeat(digit).replace(/[xy]/g, (c) => {
-      const r = (Math.random() * 16) | 0
-      const v = c == 'x' ? r : (r & 0x3) | 0x8
-      return v.toString(16)
-    })
-  }
-  export function MessageEventToPacketData(event: MessageEvent): PacketData | undefined {
-    return undefined
-  }
-}
 class ChannelProtocol implements IDestroy {
   /**
    * 消息处理函数
@@ -173,7 +161,7 @@ class ChannelProtocol implements IDestroy {
    * @param timeout 超时时间
    * @returns
    */
-  send(data: PacketData, timeout?: number): Promise<void> {
+  send(data: PacketData, timeout?: number): Promise<any> {
     if (!this.source) return Promise.reject(new Error('source 未初始化'))
 
     const source = this.source as MessageEventSource
@@ -219,13 +207,12 @@ class ChannelProtocol implements IDestroy {
 
       const { resolve, reject } = this.calls.get(playload.no) || {}
       this.calls.delete(playload.no) // 移除回调
-
       if (playload.error) {
         // 远程调用抛异常
         reject && reject(playload.error)
       } else {
         // 远程调用成功
-        resolve && resolve(playload)
+        resolve && resolve(playload.data)
       }
     } else {
       // 另一方主动发送的消息
@@ -389,6 +376,7 @@ class OpenPeerChannel implements IChannel {
     }
 
     let result: any
+    let error: any
     // 处理消息
     if (data.type & PacketDataTypeEnum.common && data.type & PacketDataTypeEnum.message) {
       const { message, messagetype = '*' } = data.data || {}
@@ -399,7 +387,11 @@ class OpenPeerChannel implements IChannel {
     }
 
     if (data.type & PacketDataTypeEnum.common && data.type & PacketDataTypeEnum.call) {
-      result = await this._vmExecute(data.data || {})
+      try {
+        result = await this._vmExecute(data.data || {})
+      } catch (e: any) {
+        error = e?.message || '未知错误'
+      }
     }
 
     // 远端连接
@@ -412,6 +404,7 @@ class OpenPeerChannel implements IChannel {
       no: data.no,
       type: PacketDataTypeEnum.internal | PacketDataTypeEnum.reply,
       data: result,
+      error,
     })
   }
 
@@ -426,16 +419,12 @@ class OpenPeerChannel implements IChannel {
       ...this.context,
     })()
     let result
-    try {
-      // 执行函数调用
-      let fnResult = fn(...args)
-      if (fnResult instanceof Promise) {
-        result = await fnResult
-      } else {
-        result = fnResult
-      }
-    } catch (e: any) {
-      result = e.message
+    // 执行函数调用
+    let fnResult = fn(...args)
+    if (fnResult instanceof Promise) {
+      result = await fnResult
+    } else {
+      result = fnResult
     }
 
     return result
